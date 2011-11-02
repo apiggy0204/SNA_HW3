@@ -1,8 +1,20 @@
 package helper;
 
 public class MyNode implements Comparable<MyNode> {
-	private int id;
 	
+	public enum Label {Movie, Person, Place, Time};
+	
+	private int id;
+	private Label label = null;
+	
+	public Label getLabel() {
+		return label;
+	}
+
+	public void setLabel(Label label) {
+		this.label = label;
+	}
+
 	public MyNode(int id){
 		this.id=id;
 	}
