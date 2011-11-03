@@ -100,4 +100,8 @@ public class MyNode implements Comparable<MyNode> {
 	public static void setPeopleCount(int peopleCount) {
 		MyNode.peopleCount = peopleCount;
 	}
+	
+	public static int getTotalVertexCount(){
+		return MyNode.getMovieCount() + MyNode.getPeopleCount() + MyNode.getPlaceCount() + MyNode.getTimeCount();
+	}
 }

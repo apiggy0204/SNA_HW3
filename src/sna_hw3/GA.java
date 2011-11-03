@@ -1,7 +1,6 @@
 package sna_hw3;
 
 import helper.MyNode;
-import helper.MyNode.Label;
 
 
 public class GA {
@@ -30,9 +29,9 @@ public class GA {
 		
 		for(MyNode node : model.graph.getVertices()){
 						
-			double timeCount = 0;
-			double peopleCount = 0;
-			double placeCount = 0;
+			int timeCount = 0;
+			int peopleCount = 0;
+			int placeCount = 0;
 			for(MyNode neighbor : model.graph.getNeighbors(node)){
 				switch(neighbor.getLabel()){
 					case Time:
@@ -49,30 +48,41 @@ public class GA {
 			
 			//Calculate penalty according to neighbors' assignment
 			switch(node.getLabel()){
-				case Time:{	
-					//TODO
-					/*timeScore -= Math.pow(timeCount/MyNode.getTimeCount(), 2);
-					timeScore -= Math.pow(peopleCount/MyNode.getPeopleCount(), 2);
-					timeScore -= Math.pow(placeCount/MyNode.getPeopleCount(), 2);*/
+				case Time:{										
+					timeScore -= (timeCount + peopleCount + placeCount);
+					/*timeScore -= Math.pow(timeCount/MyNode.getTimeCount(), 1);
+					timeScore -= Math.pow(peopleCount/MyNode.getPeopleCount(), 1);
+					timeScore -= Math.pow(placeCount/MyNode.getPeopleCount(), 1);*/
 				}
 				break;
 				case Person:{
-					/*peopleScore -= Math.pow(timeCount/MyNode.getTimeCount(), 2);
-					peopleScore -= Math.pow(peopleCount/MyNode.getPeopleCount(), 2);*/
+					peopleScore -= (timeCount + peopleCount);
+					/*peopleScore -= Math.pow(timeCount/MyNode.getTimeCount(), 1);
+					peopleScore -= Math.pow(peopleCount/MyNode.getPeopleCount(), 1);*/
 				}
 				break;
 				case Place:{				
-					/*placeScore -= Math.pow(timeCount/MyNode.getTimeCount(), 2);					
-					placeScore -= Math.pow(placeCount/MyNode.getPeopleCount(), 2);*/
+					placeScore -= (timeCount + placeCount);
+					/*placeScore -= Math.pow(timeCount/MyNode.getTimeCount(), 1);					
+					placeScore -= Math.pow(placeCount/MyNode.getPeopleCount(), 1);*/
 				}
 				break;
 			}
 		}
 		
-		System.out.println("time: " + timeScore);
+		/*System.out.println("time: " + timeScore);
 		System.out.println("person: " + peopleScore);
-		System.out.println("place: " + placeScore);
+		System.out.println("place: " + placeScore);*/
 		
+		//Inverse frequency
+		timeScore *= Math.log(28960/100);//Math.log(MyNode.getTotalVertexCount()/MyNode.getTimeCount());
+		peopleScore *= Math.log(28960/16542);//Math.log(MyNode.getTotalVertexCount()/MyNode.getPeopleCount());
+		placeScore *= Math.log(28960/817);//Math.log(MyNode.getTotalVertexCount()/MyNode.getPlaceCount());
+		
+		/*System.out.println("time: " + timeScore);
+		System.out.println("person: " + peopleScore);
+		System.out.println("place: " + placeScore);*/
+				
 		score = timeScore + placeScore + peopleScore;
 		return score;
 	}
