@@ -1,25 +1,57 @@
 package sna_hw3;
 
 import helper.*;
+import helper.MyNode.Label;
 
 import java.io.*;
 import java.util.*;
 import edu.uci.ics.jung.graph.*;
 
-public class Model {
-	DirectedGraph<MyNode,MyLink> graph=null;
-	Map<Integer,MyNode> map=null;
-	ArrayList<TreeSet<MyNode>> answerA = new ArrayList<TreeSet<MyNode>>();
-	ArrayList<TreeSet<MyNode>> answerB = new ArrayList<TreeSet<MyNode>>();
-	TreeSet<MyNode> time_candid = new TreeSet<MyNode>();
-	TreeSet<MyNode> person_candid = new TreeSet<MyNode>();
-	TreeSet<MyNode> place_candid = new TreeSet<MyNode>();
-	TreeSet<MyNode> movie_candid = new TreeSet<MyNode>();
+public class Model implements Cloneable{
+	
+	DirectedGraph<MyNode,MyLink> graph = null;
+	Map<Integer,MyNode> map = null;
+	
+	ArrayList<MyNode> nodeList = null; 
+	
+	ArrayList<TreeSet<MyNode>> answerA = null;
+	ArrayList<TreeSet<MyNode>> answerB = null;
+	
+	TreeSet<MyNode> time_candid = null;
+	TreeSet<MyNode> person_candid = null;
+	TreeSet<MyNode> place_candid = null;
+	TreeSet<MyNode> movie_candid = null;		
+	
+	public Model(Model model) {
+		Model retModel = new Model();
+		retModel.map = new TreeMap<Integer, MyNode>(model.map);
+		retModel.graph = new DirectedSparseGraph<MyNode,MyLink>();
+		/*for(MyNode node : model.graph.getVertices()){
+			//graph.
+		}*/
+	}
+
+	public Model() {
+		
+		graph=null;
+		map=null;
+		
+		setNodeList(new ArrayList<MyNode>()); 
+		
+		answerA = new ArrayList<TreeSet<MyNode>>();
+		answerB = new ArrayList<TreeSet<MyNode>>();
+		
+		time_candid = new TreeSet<MyNode>();
+		person_candid = new TreeSet<MyNode>();
+		place_candid = new TreeSet<MyNode>();
+		movie_candid = new TreeSet<MyNode>();
+	}
 
 	public void getInitial() throws IOException{
 		GraphReader reader = new GraphReader("hw3.masklink_1029.txt");
 		graph=reader.readGraph();
 		map=reader.getMap();
+		for(MyNode node : graph.getVertices()) getNodeList().add(node);		
 		answerA.add(movie_candid);
 		answerA.add(place_candid);
 		answerA.add(time_candid);
@@ -66,8 +98,9 @@ public class Model {
 			movie_candid.remove(delete);
 		}
 		
+		//Add all remaining nodes to person_candid and move some of them to place_candid
 		deleteList = null;
-		
+	
 		for (MyNode person : graph.getVertices()){
 			if (!movie_candid.contains(person) && !time_candid.contains(person)){
 				person_candid.add(person);
@@ -121,7 +154,7 @@ public class Model {
 	}
 	
 	
-	public static void main(String[] args)throws IOException {
+	public static void main(String[] args)throws IOException {		
 		
 		// Initial Step
 		
@@ -129,7 +162,11 @@ public class Model {
 		model.getInitial();
 		model.partFirst();
 		
-		
+		//Label every node
+		for(MyNode movie : model.movie_candid) movie.setLabel(Label.Movie);
+		for(MyNode movie : model.place_candid) movie.setLabel(Label.Place);
+		for(MyNode movie : model.time_candid) movie.setLabel(Label.Time);
+		for(MyNode movie : model.person_candid) movie.setLabel(Label.Person);		
 		
 		//output result
 		System.out.println(model.movie_candid.size());
@@ -138,5 +175,13 @@ public class Model {
 		System.out.println(model.person_candid.size());
 		
 		model.writerOutcomeA("outcomeA.txt");
+	}
+
+	public ArrayList<MyNode> getNodeList() {
+		return nodeList;
+	}
+
+	public void setNodeList(ArrayList<MyNode> nodeList) {
+		this.nodeList = nodeList;
 	}
 }
